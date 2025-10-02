@@ -1,23 +1,24 @@
 import Link from "next/link";
 
 interface Post {
-  id: string;
+  id: number;
   title: string;
-  content: string;
-}
-
-async function getPosts() {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-  return res.json();
+  body: string;
 }
 
 export default async function BlogList() {
-  const posts: Post[] = await getPosts();
-
+  const res = await fetch(
+    "https://jsonplaceholder.typicode.com/posts?_limit=5",
+    {
+      next: { revalidate: 60 },
+    }
+  );
+  const posts: Post[] = await res.json();
   return (
-    <div style={{ padding: "24" }}>
+    <div>
+      <h1>Blog list</h1>
       <ul>
-        {posts.slice(0, 10).map((post) => (
+        {posts.map((post) => (
           <li key={post.id}>
             <Link href={`/blog/${post.id}`}>{post.title}</Link>
           </li>
